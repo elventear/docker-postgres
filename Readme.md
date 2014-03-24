@@ -1,17 +1,12 @@
 # PostgreSQL Docker file
 
-Version 9.3
+This Dockerfile builds a postgres image that exposes port 5432
+It is currently running version 9.3
 
 ### Build a container
 
 ```
-docker pull shicholas/postgresql
-docker run --name=pg shicholas/postgresql
+docker run --name=pg -d shicholas/postgresql
 ```
 
-### Link
-
-```
-docker run -link 
-```
-
+You can then use this image to link another container that needs postgres i.e. rails
