@@ -1,13 +1,19 @@
-FROM debian:jessie
-MAINTAINER Nicholas Shook, nicholas.shook@gmail.com
+FROM debian:wheezy
 
-RUN apt-get update && apt-get install -y \
-      postgresql-9.3 \
-      postgresql-contrib-9.3 \
-      postgresql-client
+MAINTAINER Pepe Barbe <dev@antropoide.net>
 
-ENV PATH $PATH:/usr/lib/postgresql/9.3/bin
-ENV PGDATA /var/lib/postgresql/9.3/main
+RUN apt-get update && apt-get -y install curl build-essential python-dev python-setuptools
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main' > /etc/apt/sources.list.d/pgdg.list && \
+    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+RUN apt-get update && \
+    apt-get -y install postgresql-client-9.3 postgresql-9.3 postgresql-server-dev-9.3 postgresql-contrib-9.3 pgxnclient
+RUN pgxn install multicorn
+RUN apt-get -y install protobuf-c-compiler libprotobuf-c0-dev && pgxn install cstore_fdw
+RUN apt-get -y install zlib1g-dev libyajl-dev && pgxn install json_fdw
+RUN apt-get -y install libmysqlclient-dev && USE_PGXS=1 pgxn install mysql_fdw
+RUN apt-get -y install git-core libjson0-dev libcurl4-openssl-dev && cd /tmp && \
+    git clone https://github.com/nuko-yokohama/neo4j_fdw.git && \
+    cd neo4j_fdw && USE_PGXS=1 make
 
 # switch to user postgres
 USER postgres
